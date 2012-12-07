@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="HIO">
+</Property><Property Name="Solution File" Value="G:\Nick\GitHub\uks_server\HIO.sln">
+</Property><Property Name="Date" Value="07 December 2012">
+</Property><Property Name="Time" Value="15:50">
+</Property></Properties><Event ErrorLevel="0" Project="HIO" Source="HIO.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="HIO" Source="HIO.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="HIO.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="HIO.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="HIO" Source="HIO.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
