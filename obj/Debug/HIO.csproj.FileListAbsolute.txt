@@ -13,3 +13,8 @@ G:\Nick\GitHub\WashingAppServer\bin\HIO.pdb
 G:\Nick\GitHub\WashingAppServer\obj\Debug\ResolveAssemblyReference.cache
 G:\Nick\GitHub\WashingAppServer\obj\Debug\HIO.dll
 G:\Nick\GitHub\WashingAppServer\obj\Debug\HIO.pdb
+G:\Nick\GitHub\uks_server\bin\HIO.dll
+G:\Nick\GitHub\uks_server\bin\HIO.pdb
+G:\Nick\GitHub\uks_server\obj\Debug\ResolveAssemblyReference.cache
+G:\Nick\GitHub\uks_server\obj\Debug\HIO.dll
+G:\Nick\GitHub\uks_server\obj\Debug\HIO.pdb
