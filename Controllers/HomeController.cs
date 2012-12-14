@@ -394,7 +394,7 @@ namespace HIO.Controllers
                 userID = userd.First().UserID;
                 phonename = userd.First().Comment;
                 dataRepository.AddLogin(Convert.ToInt32(userID), usertype);
-                dataRepository.updateUser(Convert.ToInt32(userID));
+                //dataRepository.updateUser(Convert.ToInt32(userID));
                 siteCount = dataRepository.SiteCount(Convert.ToInt32(userID));
 
             }
@@ -477,16 +477,16 @@ namespace HIO.Controllers
              return new JsonpResult("Done");
          }
 
-         public ActionResult AddSnowEvent(string cm, string location, string name)
+         public ActionResult AddSnowEvent(int UserID, string cm, string location, string name)
          {
-             dataRepository.AddSnow(cm, location, name);
+             dataRepository.AddSnow(UserID, cm, location, name);
              
              return new JsonpResult("Done");
          }
 
-         public ActionResult AddColdest(string temp, string location, string name)
+         public ActionResult AddColdest(int UserID, string temp, string location, string name)
          {
-             dataRepository.AddColdest(temp, location, name);
+             dataRepository.AddColdest(UserID, temp, location, name);
 
              return new JsonpResult("Done");
          }

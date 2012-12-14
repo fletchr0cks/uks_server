@@ -1,22 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="dbb7ab6d80ef0b40bc925da0210152b17d" Class="hioDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="Data Source=b7ab6d80-ef0b-40bc-925d-a0210152b17d.sqlserver.sequelizer.com;Initial Catalog=dbb7ab6d80ef0b40bc925da0210152b17d;User ID=wnohangthtsmleuv" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="dbb7ab6d80ef0b40bc925da0210152b17dConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Users" Member="Users">
-    <Type Name="User">
-      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PID" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="Lat" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
-      <Column Name="Long" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
-      <Column Name="Country" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="City" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Comment" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="false" />
-      <Association Name="User_comment" Member="comments" ThisKey="UserID" OtherKey="UserID" Type="comment" />
-      <Association Name="User_hio_event" Member="hio_events" ThisKey="UserID" OtherKey="UserID" Type="hio_event" />
-      <Association Name="User_user_location" Member="user_locations" ThisKey="UserID" OtherKey="UserID" Type="user_location" />
-      <Association Name="User_IPaddress" Member="IPaddresses" ThisKey="UserID" OtherKey="UserID" Type="IPaddress" />
-    </Type>
-  </Table>
   <Table Name="dbo.comments" Member="comments">
     <Type Name="comment">
       <Column Name="CID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -24,8 +7,8 @@
       <Column Name="Comment" Member="Comment1" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Datetime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Association Name="User_comment" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
       <Association Name="place_comment" Member="place" ThisKey="PlaceID" OtherKey="PID" Type="place" IsForeignKey="true" />
+      <Association Name="User_comment" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.hio_events" Member="hio_events">
@@ -35,7 +18,7 @@
       <Column Name="Event" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="Datetime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Type" Type="System.String" CanBeNull="false" />
-      <Association Name="User_hio_event" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
+      <Association Name="User_hio_event" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.user_locations" Member="user_locations">
@@ -46,7 +29,7 @@
       <Column Name="LatVal" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
       <Column Name="LongVal" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
       <Column Name="Inuse" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="User_user_location" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
+      <Association Name="User_user_location" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.Settings" Member="Settings">
@@ -86,7 +69,24 @@
       <Column Name="IPaddr" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="User_IPaddress" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
+      <Association Name="User_IPaddress" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Users" Member="Users">
+    <Type Name="User">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PID" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Lat" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
+      <Column Name="Long" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
+      <Column Name="Country" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="City" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="User_comment" Member="comments" ThisKey="UserID" OtherKey="UserID" Type="comment" />
+      <Association Name="User_hio_event" Member="hio_events" ThisKey="UserID" OtherKey="UserID" Type="hio_event" />
+      <Association Name="User_user_location" Member="user_locations" ThisKey="UserID" OtherKey="UserID" Type="user_location" />
+      <Association Name="User_IPaddress" Member="IPaddresses" ThisKey="UserID" OtherKey="UserID" Type="IPaddress" />
     </Type>
   </Table>
 </Database>

@@ -119,25 +119,38 @@ namespace HIO.Models
             newevent.Event = type;
             newevent.Datetime = DateTime.Now;
             db.hio_events.InsertOnSubmit(newevent);
+
+            if (type == "Existing")
+            {
+
+                var user = db.Users
+                    .Where(u => u.UserID == userID)
+                    .First();
+
+                user.Timestamp = DateTime.Now;
+            }
+
             db.SubmitChanges();
         }
 
-        public void AddSnow(string cm, string location, string name)
+        public void AddSnow(int UserID, string cm, string location, string name)
         {
              hio_event newevt = new hio_event();
              newevt.Datetime = DateTime.Now;
              newevt.Event = cm;
              newevt.Type = "Snow";
+             newevt.UserID = UserID;
             db.hio_events.InsertOnSubmit(newevt);
             db.SubmitChanges();
         }
 
-        public void AddColdest(string temp, string location, string name)
+        public void AddColdest(int UserID, string temp, string location, string name)
         {
             hio_event newevt = new hio_event();
             newevt.Datetime = DateTime.Now;
             newevt.Event = temp;
             newevt.Type = "Temp";
+            newevt.UserID = UserID;
             db.hio_events.InsertOnSubmit(newevt);
             db.SubmitChanges();
         }
