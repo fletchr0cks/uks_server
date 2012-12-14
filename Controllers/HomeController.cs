@@ -447,7 +447,7 @@ namespace HIO.Controllers
          public ActionResult GetWeather(int userID, string latval, string longval)
         {
             dataRepository.APIcall(userID);
-            dataRepository.UserLoc(userID,latval,longval);
+            //dataRepository.UserLoc(userID,latval,longval);
 
             return new JsonpResult("Done");
         }
