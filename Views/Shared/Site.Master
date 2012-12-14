@@ -25,7 +25,7 @@
     <div data-role="header" data-position="fixed">
         <asp:ContentPlaceHolder ID="PageTitleContent" runat="server" />
     </div>
-    <div data-role="content" data-theme="a">
+    <div data-role="content" data-theme="a" id="allcontent">
          <asp:ContentPlaceHolder ID="MainContent" runat="server" />
     </div>
   </div>

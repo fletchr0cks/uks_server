@@ -77,6 +77,7 @@
       <DependentUpon>hio.dbml</DependentUpon>
     </Compile>
     <Compile Include="Models\jsonp.cs" />
+    <Compile Include="Models\place.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +118,8 @@
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\UserDataStorage.js" />
     <Content Include="Scripts\WebkitSQLiteAdaptor.js" />
+    <Content Include="Views\Home\CommentsPartial.ascx" />
+    <Content Include="Views\Home\ListAllSites.aspx" />
     <Content Include="Views\Home\Search.aspx" />
     <Content Include="Views\Home\Save.aspx" />
     <Content Include="Views\Home\SearchSites.aspx" />

@@ -39,9 +39,6 @@ namespace HIO.Models
     partial void Inserthio_event(hio_event instance);
     partial void Updatehio_event(hio_event instance);
     partial void Deletehio_event(hio_event instance);
-    partial void Insertnotice(notice instance);
-    partial void Updatenotice(notice instance);
-    partial void Deletenotice(notice instance);
     partial void Insertuser_location(user_location instance);
     partial void Updateuser_location(user_location instance);
     partial void Deleteuser_location(user_location instance);
@@ -51,6 +48,12 @@ namespace HIO.Models
     partial void Insertplace(place instance);
     partial void Updateplace(place instance);
     partial void Deleteplace(place instance);
+    partial void Insertnotice(notice instance);
+    partial void Updatenotice(notice instance);
+    partial void Deletenotice(notice instance);
+    partial void InsertIPaddress(IPaddress instance);
+    partial void UpdateIPaddress(IPaddress instance);
+    partial void DeleteIPaddress(IPaddress instance);
     #endregion
 		
 		public hioDataContext() : 
@@ -107,14 +110,6 @@ namespace HIO.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<notice> notices
-		{
-			get
-			{
-				return this.GetTable<notice>();
-			}
-		}
-		
 		public System.Data.Linq.Table<user_location> user_locations
 		{
 			get
@@ -136,6 +131,22 @@ namespace HIO.Models
 			get
 			{
 				return this.GetTable<place>();
+			}
+		}
+		
+		public System.Data.Linq.Table<notice> notices
+		{
+			get
+			{
+				return this.GetTable<notice>();
+			}
+		}
+		
+		public System.Data.Linq.Table<IPaddress> IPaddresses
+		{
+			get
+			{
+				return this.GetTable<IPaddress>();
 			}
 		}
 	}
@@ -162,11 +173,15 @@ namespace HIO.Models
 		
 		private string _Comment;
 		
+		private string _Password;
+		
 		private EntitySet<comment> _comments;
 		
 		private EntitySet<hio_event> _hio_events;
 		
 		private EntitySet<user_location> _user_locations;
+		
+		private EntitySet<IPaddress> _IPaddresses;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -188,6 +203,8 @@ namespace HIO.Models
     partial void OnTimestampChanged();
     partial void OnCommentChanging(string value);
     partial void OnCommentChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
     #endregion
 		
 		public User()
@@ -195,6 +212,7 @@ namespace HIO.Models
 			this._comments = new EntitySet<comment>(new Action<comment>(this.attach_comments), new Action<comment>(this.detach_comments));
 			this._hio_events = new EntitySet<hio_event>(new Action<hio_event>(this.attach_hio_events), new Action<hio_event>(this.detach_hio_events));
 			this._user_locations = new EntitySet<user_location>(new Action<user_location>(this.attach_user_locations), new Action<user_location>(this.detach_user_locations));
+			this._IPaddresses = new EntitySet<IPaddress>(new Action<IPaddress>(this.attach_IPaddresses), new Action<IPaddress>(this.detach_IPaddresses));
 			OnCreated();
 		}
 		
@@ -358,6 +376,26 @@ namespace HIO.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50)", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_comment", Storage="_comments", ThisKey="UserID", OtherKey="UserID")]
 		public EntitySet<comment> comments
 		{
@@ -394,6 +432,19 @@ namespace HIO.Models
 			set
 			{
 				this._user_locations.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_IPaddress", Storage="_IPaddresses", ThisKey="UserID", OtherKey="UserID")]
+		public EntitySet<IPaddress> IPaddresses
+		{
+			get
+			{
+				return this._IPaddresses;
+			}
+			set
+			{
+				this._IPaddresses.Assign(value);
 			}
 		}
 		
@@ -448,6 +499,18 @@ namespace HIO.Models
 		}
 		
 		private void detach_user_locations(user_location entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
+		private void attach_IPaddresses(IPaddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_IPaddresses(IPaddress entity)
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
@@ -708,6 +771,8 @@ namespace HIO.Models
 		
 		private System.DateTime _Datetime;
 		
+		private string _Type;
+		
 		private EntityRef<User> _User;
 		
     #region Extensibility Method Definitions
@@ -722,6 +787,8 @@ namespace HIO.Models
     partial void OnEventChanged();
     partial void OnDatetimeChanging(System.DateTime value);
     partial void OnDatetimeChanged();
+    partial void OnTypeChanging(string value);
+    partial void OnTypeChanged();
     #endregion
 		
 		public hio_event()
@@ -814,6 +881,26 @@ namespace HIO.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", CanBeNull=false)]
+		public string Type
+		{
+			get
+			{
+				return this._Type;
+			}
+			set
+			{
+				if ((this._Type != value))
+				{
+					this.OnTypeChanging(value);
+					this.SendPropertyChanging();
+					this._Type = value;
+					this.SendPropertyChanged("Type");
+					this.OnTypeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_hio_event", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true)]
 		public User User
 		{
@@ -844,140 +931,6 @@ namespace HIO.Models
 						this._UserID = default(int);
 					}
 					this.SendPropertyChanged("User");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.notices")]
-	public partial class notice : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _NID;
-		
-		private System.Data.Linq.Binary _Ann_content;
-		
-		private System.DateTime _Datetime;
-		
-		private string _Name;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnNIDChanging(int value);
-    partial void OnNIDChanged();
-    partial void OnAnn_contentChanging(System.Data.Linq.Binary value);
-    partial void OnAnn_contentChanged();
-    partial void OnDatetimeChanging(System.DateTime value);
-    partial void OnDatetimeChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    #endregion
-		
-		public notice()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int NID
-		{
-			get
-			{
-				return this._NID;
-			}
-			set
-			{
-				if ((this._NID != value))
-				{
-					this.OnNIDChanging(value);
-					this.SendPropertyChanging();
-					this._NID = value;
-					this.SendPropertyChanged("NID");
-					this.OnNIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ann_content", DbType="VarBinary(MAX) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
-		public System.Data.Linq.Binary Ann_content
-		{
-			get
-			{
-				return this._Ann_content;
-			}
-			set
-			{
-				if ((this._Ann_content != value))
-				{
-					this.OnAnn_contentChanging(value);
-					this.SendPropertyChanging();
-					this._Ann_content = value;
-					this.SendPropertyChanged("Ann_content");
-					this.OnAnn_contentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datetime", DbType="DateTime NOT NULL")]
-		public System.DateTime Datetime
-		{
-			get
-			{
-				return this._Datetime;
-			}
-			set
-			{
-				if ((this._Datetime != value))
-				{
-					this.OnDatetimeChanging(value);
-					this.SendPropertyChanging();
-					this._Datetime = value;
-					this.SendPropertyChanged("Datetime");
-					this.OnDatetimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
 				}
 			}
 		}
@@ -1663,6 +1616,315 @@ namespace HIO.Models
 		{
 			this.SendPropertyChanging();
 			entity.place = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.notices")]
+	public partial class notice : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _NID;
+		
+		private string _Ann_content;
+		
+		private System.DateTime _Datetime;
+		
+		private string _Name;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnNIDChanging(int value);
+    partial void OnNIDChanged();
+    partial void OnAnn_contentChanging(string value);
+    partial void OnAnn_contentChanged();
+    partial void OnDatetimeChanging(System.DateTime value);
+    partial void OnDatetimeChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    #endregion
+		
+		public notice()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int NID
+		{
+			get
+			{
+				return this._NID;
+			}
+			set
+			{
+				if ((this._NID != value))
+				{
+					this.OnNIDChanging(value);
+					this.SendPropertyChanging();
+					this._NID = value;
+					this.SendPropertyChanged("NID");
+					this.OnNIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ann_content", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Ann_content
+		{
+			get
+			{
+				return this._Ann_content;
+			}
+			set
+			{
+				if ((this._Ann_content != value))
+				{
+					this.OnAnn_contentChanging(value);
+					this.SendPropertyChanging();
+					this._Ann_content = value;
+					this.SendPropertyChanged("Ann_content");
+					this.OnAnn_contentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datetime", DbType="DateTime NOT NULL")]
+		public System.DateTime Datetime
+		{
+			get
+			{
+				return this._Datetime;
+			}
+			set
+			{
+				if ((this._Datetime != value))
+				{
+					this.OnDatetimeChanging(value);
+					this.SendPropertyChanging();
+					this._Datetime = value;
+					this.SendPropertyChanged("Datetime");
+					this.OnDatetimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.IPaddresses")]
+	public partial class IPaddress : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _IPID;
+		
+		private string _IPaddr;
+		
+		private System.DateTime _Timestamp;
+		
+		private int _UserID;
+		
+		private EntityRef<User> _User;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIPIDChanging(int value);
+    partial void OnIPIDChanged();
+    partial void OnIPaddrChanging(string value);
+    partial void OnIPaddrChanged();
+    partial void OnTimestampChanging(System.DateTime value);
+    partial void OnTimestampChanged();
+    partial void OnUserIDChanging(int value);
+    partial void OnUserIDChanged();
+    #endregion
+		
+		public IPaddress()
+		{
+			this._User = default(EntityRef<User>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IPID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IPID
+		{
+			get
+			{
+				return this._IPID;
+			}
+			set
+			{
+				if ((this._IPID != value))
+				{
+					this.OnIPIDChanging(value);
+					this.SendPropertyChanging();
+					this._IPID = value;
+					this.SendPropertyChanged("IPID");
+					this.OnIPIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IPaddr", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string IPaddr
+		{
+			get
+			{
+				return this._IPaddr;
+			}
+			set
+			{
+				if ((this._IPaddr != value))
+				{
+					this.OnIPaddrChanging(value);
+					this.SendPropertyChanging();
+					this._IPaddr = value;
+					this.SendPropertyChanged("IPaddr");
+					this.OnIPaddrChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Timestamp", DbType="DateTime NOT NULL")]
+		public System.DateTime Timestamp
+		{
+			get
+			{
+				return this._Timestamp;
+			}
+			set
+			{
+				if ((this._Timestamp != value))
+				{
+					this.OnTimestampChanging(value);
+					this.SendPropertyChanging();
+					this._Timestamp = value;
+					this.SendPropertyChanged("Timestamp");
+					this.OnTimestampChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="Int NOT NULL")]
+		public int UserID
+		{
+			get
+			{
+				return this._UserID;
+			}
+			set
+			{
+				if ((this._UserID != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIDChanging(value);
+					this.SendPropertyChanging();
+					this._UserID = value;
+					this.SendPropertyChanged("UserID");
+					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_IPaddress", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true)]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.IPaddresses.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.IPaddresses.Add(this);
+						this._UserID = value.UserID;
+					}
+					else
+					{
+						this._UserID = default(int);
+					}
+					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

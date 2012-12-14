@@ -73,7 +73,7 @@ function SaveFirstLoginDetails(lat, lng, town) {
    
 }
 
-function SaveLoginDetails(APIcalls,phonename,userID,site_ct,total,lat_nm,lat_tn) {
+function SaveLoginDetails(APIcalls,username,userID,site_ct,total,lat_nm,lat_tn) {
 
     var store = new Lawnchair({
         adapter: "dom",
@@ -84,12 +84,57 @@ function SaveLoginDetails(APIcalls,phonename,userID,site_ct,total,lat_nm,lat_tn)
     var me = {
         key: 'login_data',
         APIcalls: APIcalls,
-        phonename: phonename,
+        username: username,
         userID: userID,
         site_ct: site_ct,
         total: total,
         lat_nm: lat_nm,
         lat_tn: lat_tn
+    };
+
+    // save it
+    store.save(me);
+
+}
+
+function SaveLoginDetailsUP(APIcalls,userID,site_ct,total,lat_nm,lat_tn,username,password) {
+
+    var store = new Lawnchair({
+        adapter: "dom",
+        name: "data_store"
+    }, function(store) {
+    });
+
+    var me = {
+        key: 'login_data',
+        APIcalls: APIcalls,
+        userID: userID,
+        site_ct: site_ct,
+        total: total,
+        lat_nm: lat_nm,
+        lat_tn: lat_tn,
+        username: username,
+        password: password
+    };
+
+    // save it
+    store.save(me);
+
+}
+
+
+function SaveUserPass(username,password) {
+
+    var store = new Lawnchair({
+        adapter: "dom",
+        name: "data_store"
+    }, function(store) {
+    });
+
+    var me = {
+        key: 'login_data',
+        username: username,
+        password: password
     };
 
     // save it
@@ -259,6 +304,46 @@ function getUserIDstore() {
         } else {
         }
     });
+    if (item == undefined) {
+        return ("10");
+    } else {
+        return (item);
+    }
+}
+
+function getPassword() {
+    var item;
+    var store = new Lawnchair({
+        adapter: "dom",
+        name: "data_store"
+    }, function (store) {
+    });
+    store.exists("login_data", function (available) {
+        if (available) {
+            store.get("login_data", function (theJsonData) {
+                item = theJsonData.password;
+            });
+        } else {
+        }
+    });
+    return (item);
+}
+
+function getUsername() {
+    var item;
+    var store = new Lawnchair({
+        adapter: "dom",
+        name: "data_store"
+    }, function (store) {
+    });
+    store.exists("login_data", function (available) {
+        if (available) {
+            store.get("login_data", function (theJsonData) {
+                item = theJsonData.username;
+            });
+        } else {
+        }
+    });
     return (item);
 }
 
@@ -382,13 +467,18 @@ function getPhoneNamestore() {
     store.exists("login_data", function(available) {
         if (available) {
             store.get("login_data", function(theJsonData) {
-                item = theJsonData.phonename;
+                item = theJsonData.username;
             });
         } else {
         }
     });
+
    
-    return (item);
+    if (item == undefined) {
+        return ("undefined");
+    } else {
+        return (item);
+    }
 }
 
 function getFromStore(storetype,storeval) {
@@ -414,8 +504,61 @@ function getFromStore(storetype,storeval) {
 }
 
 function FTLcheck() {
-  
-    
+
+    $('#search_id').bind('expand', function () {
+        $("#add_site").trigger('collapse');
+        $("#my_sites").trigger('collapse');
+        $("#addcommentdiv").slideUp();
+        $("#place_comments").slideUp();
+        $("#map_msg").html("Search sites.");
+        $("#map_canvas").html("&nbsp;");
+        $("#place_name").html("Search by name, town and user.");
+
+
+    }).bind('collapse', function () {
+        if ($('#add_site').hasClass('ui-collapsible-collapsed') && $('#my_sites').hasClass('ui-collapsible-collapsed')) {
+            $("#place_comments").slideUp();
+            $("#addcommentdiv").slideUp();
+            load_data_refresh();
+        }
+    });
+
+    $('#add_site').bind('expand', function () {
+        $("#search_id").trigger('collapse');
+        $("#my_sites").trigger('collapse');
+        $("#addcommentdiv").slideUp();
+        $("#place_comments").slideUp();
+        add_site_map();
+
+    }).bind('collapse', function () {
+        if ($('#search_id').hasClass('ui-collapsible-collapsed') && $('#my_sites').hasClass('ui-collapsible-collapsed')) {
+            $("#place_comments").slideUp();
+            $("#addcommentdiv").slideUp();
+            load_data_refresh();
+        }
+    });
+
+    $('#my_sites').bind('expand', function () {
+        $("#search_id").trigger('collapse');
+        $("#add_site").trigger('collapse');
+        $("#addcommentdiv").slideUp();
+        $("#place_comments").slideUp();
+        ListSites();
+
+    }).bind('collapse', function () {
+        if ($('#search_id').hasClass('ui-collapsible-collapsed') && $('add_site').hasClass('ui-collapsible-collapsed')) {
+            $("#place_comments").slideUp();
+            $("#addcommentdiv").slideUp();
+            load_data_refresh();
+        }
+    });
+
+ 
+
+
+//        
+//        
+     
  var store = new Lawnchair({
         adapter: "dom",
         name: "data_store"
@@ -521,8 +664,8 @@ function logWeather(userid,latval,longval) {
 
     $.ajax({
         type: "POST",
-        url: "http://washingapp.apphb.com/Home/GetWeather",
-        //url: "http://localhost:3192/Home/GetWeather",
+        //url: "http://washingapp.apphb.com/Home/GetWeather",
+        url: "http://localhost:3192/Home/GetWeather",
         data: "userID=" + userid + "&latval=" + latval + "&longval=" + longval,
         dataType: "text/plain",
         success: function(response) {
@@ -635,6 +778,7 @@ function getWeather(timediff) {
 function setPC(postcode) {
     //$("setloc").dialog("close");
     //var postcode = $("set_pc").val();
+    $('#gps_results').html('Searching ..');
     var postcode = document.getElementById("postcode").value;
     var pc_uri = encodeURI(postcode);
     
@@ -646,27 +790,59 @@ function closeDetails() {
 $('#my_details').dialog('close');
 }
 
-function saveName() {
-    //$("setloc").dialog("close");
-    //var postcode = $("set_pc").val();
-    var username = document.getElementById("username1").value;
+function Edit() {
+    
+    //var phonename = getPhoneNamestore();
+    //alert(phonename);
+    //console.log(phonename);
+    //$('#loginmsg').html(phonename.toString);
+    //if (phonename == "undefined") {
+        //$('#loginmsg').html("hihi");
+        $('#setlogin').show();
+   // } else {
+    //    $('#changelogin').show();
+    //}
+//check for login details
+
+}
+
+function saveLogin() {
+    alert("here");
+    var username = document.getElementById("usernameid").value;
+    var pass = document.getElementById("passid").value;
+    var pass2 = document.getElementById("passid2").value;
     var userid = getUserIDstore();
     //
-
-    $.mobile.loading('show', {
-        text: 'foo',
-        textVisible: true,
-        theme: 'a',
-        html: "<p>Saving name ...</p>"
-    });
-    alert(username + userid);
+    if (pass != pass2) {
+        $('#loginmsg').html("Passwords don't match.");
+    } else {
+        $.mobile.loading('show', {
+            text: 'foo',
+            textVisible: true,
+            theme: 'a',
+            html: "<p>Saving name ...</p>"
+        });
+    var userID;
+    var APIcalls;
+    var site_ct;
+    var lat_nm;
+    var lat_tn;
+    var total;
+   
     $.ajax({
         type: "POST",
-        //url: "http://localhost:3192/Home/SavePhonename",
-        url: "http://washingapp.apphb.com/Home/SavePhonename",
-        data: "userid=" + userid + "&phonename=" + username,
+        url: "http://localhost:3192/Home/SaveBrowser",
+        //url: "http://washingapp.apphb.com/Home/SavePhonename",
+        data: "newu=true&username=" + username + "&password=" + pass,
         dataType: "jsonp",
-        success: function(json) {
+        success: function (json) {
+            var jsontext = JSON.stringify(json);
+            userID = json['userID'];
+            APIcalls = json['APIcalls'];
+            site_ct = json['site_ct'];
+            lat_nm = json['lat_nm'];
+            lat_tn = json['lat_tn'];
+            total = json['total'];
 
         },
         error: function(xhr, error) {
@@ -676,16 +852,33 @@ function saveName() {
         complete: function(xhr, status) {
             $("#phone_name").html(username);
             $('#name_msg').html("");
-            $("#add_site_link").removeClass("ui-disabled");
-            $("#add_site_link").addClass("ui-enabled");
-            $("#my_sites_link").removeClass("ui-disabled");
-            $("#my_sites_link").addClass("ui-enabled");
+            $("#add_site").removeClass("ui-disabled");
+            $("#add_site").addClass("ui-enabled");
+            $("#my_sites").removeClass("ui-disabled");
+            $("#my_sites").addClass("ui-enabled");
+            SaveLoginDetailsUP(APIcalls, userID, site_ct, total, lat_nm, lat_tn, username, pass);
+            $('#phone_name').html(username);
+            //document.getElementById("username1").value = phonename;
+
+            $('#my_sites_ct').html("(" + site_ct + ")");
+            
+            var town = getTownstore();
+            $('#loc_here').html(town);
+            $("#gps_results").html(town);
+            $('#lat_nm').html(lat_nm);
+            $('#lat_tn').html(lat_tn);
+            $('#total_sites').html(total);
             closeDetails();
-            load_data_db();
+            //getWeather(1);
+
+            
+            //load_data_db();
             $.mobile.loading('hide');
 
         }
     });
+
+}
 
 }
 
@@ -756,7 +949,7 @@ function saveSite2(town) {
             document.getElementById("lat_coord").innerHTML = "";
             document.getElementById("long_coord").innerHTML = "";
             var new_ct = parseInt(getSiteCtstore()) + 1;
-            $("#my_sites_ct").html(new_ct.toString());
+            $("#my_sites_ct").html("(" + new_ct.toString() + ")");
             $.mobile.loading('show', {
                 text: 'foo',
                 textVisible: true,
@@ -784,6 +977,11 @@ function refreshPage(msg) {
     }
   );
 
+}
+
+function HideComments() {
+    $("#place_comments").slideUp();
+    $("#addcommentdiv").slideUp();
 }
 
 function saveMovedSite() {
@@ -940,14 +1138,14 @@ var start = function() {
 
     $("#my_details_link").removeClass("ui-disabled");
     $("#my_details_link").addClass("ui-enabled");
-    // var phonename = document.getElementById("username1").value;
-    //   if (phonename.length > 0) {
-    //       $("#add_site_link").removeClass("ui-disabled");
-    //       $("#add_site_link").addClass("ui-enabled");
-    //
-    //       $("#my_sites_link").removeClass("ui-disabled");
-    //       $("#my_sites_link").addClass("ui-enabled");
-    //   }
+    var username = getPhoneNamestore();
+       if (username != "undefined") {
+           $("#add_site").removeClass("ui-disabled");
+           $("#add_site").addClass("ui-enabled");
+    
+           $("#my_sites").removeClass("ui-disabled");
+           $("#my_sites").addClass("ui-enabled");
+      }
     $("#search_link").removeClass("ui-disabled");
     $("#search_link").addClass("ui-enabled");
 
@@ -995,7 +1193,7 @@ function save_id() {
         var phoneid = device.uuid;
        // $("#uuid").html(phoneid);
 } catch (Error) {
-    var phoneid = "laptop2";
+    var phoneid = "nondroid";
     }
     $.ajax({
         type: "POST",
@@ -1024,7 +1222,7 @@ function save_id() {
 }
 
 function load_data_refresh() {
-    var browser_w = parseInt($(document).width()) - 10;
+    var browser_w = parseInt($(document).width()) - 20;
     $('#data_status').append("widths: " + browser_w);
     $('#map_overlay').css('width', browser_w.toString() + 'px');
     $('#set_map_overlaym').css('width', browser_w.toString() + 'px');
@@ -1039,14 +1237,19 @@ function load_data_refresh() {
     });
 
     var site_ct = getSiteCtstore();
-    
+    var username = getPhoneNamestore();
+    if (username == "undefined") {
+        $('#name_msg').html("Please add a name in My Details before adding sites.");
+    } else {
+        $('#phone_name').html(username);
+    }
     var town = getTownstore();
     var total = getTotalstore();
     var lat_tn = getLat_tn();
     var lat_nm = getLat_nm();
-    //$('#phone_name').html(phonename);
-    //document.getElementById("username1").value = phonename;
-    $('#my_sites_ct').html(site_ct);
+  
+    
+    $('#my_sites_ct').html("(" + site_ct + ")");
     $('#data_status').append("API: unknown");
     $('#loc_here').html(town);
     $("#gps_results").html(town);
@@ -1061,7 +1264,7 @@ function load_data_refresh() {
 
 //get name + userID, API calls #
 function load_data_db() {
-    var browser_w = parseInt($(document).width()) - 10;
+    var browser_w = parseInt($(document).width()) - 20;
     $('#data_status').append("widths: " + browser_w);
     $('#map_overlay').css('width', browser_w.toString() + 'px');
     $('#set_map_overlaym').css('width', browser_w.toString() + 'px');
@@ -1074,66 +1277,90 @@ function load_data_db() {
         theme: 'a',
         html: "<p>Please be patient ...</p><p></p><p>Loading data</p>"
     });
-    try {
-        var phoneid = device.uuid;
-       // $("#uuid").html(phoneid);
-    } catch (Error) {
-    var phoneid = "laptop3";
-   // $("#uuid").html(phoneid);
-    }
+     var phoneid = "nondroid";
+
+    var password = getPassword();
+    var username = getUsername();
     var userID;
-    var phonename;
     var APIcalls;
     var site_ct;
-    var new_user = "false";
     var lat_nm;
     var lat_tn;
     var total;
+    var ustatus;
+    var statusmsg;
     $.ajax({
         type: "POST",
-        url: "http://washingapp.apphb.com/Home/SaveID",
-        //url: "http://localhost:3192/Home/SaveID",
-        data: "phoneID=" + phoneid,
+        //url: "http://washingapp.apphb.com/Home/SaveID",
+        url: "http://localhost:3192/Home/SaveBrowser",
+        data: "newu=false&username=" + username + "&password=" + password,
         dataType: "jsonp",
-        success: function(json) {
+        success: function (json) {
             var jsontext = JSON.stringify(json);
-            userID = json['userID'];
-            phonename = json['Name'];
-            APIcalls = json['APIcalls'];
-            site_ct = json['site_ct'];
-            lat_nm = json['lat_nm'];
-            lat_tn = json['lat_tn'];
-            total = json['total'];
-            new_user = "true";
-
+            ustatus = json['status'];
+          
+            if (ustatus == '1') {
+                userID = json['userID'];
+                APIcalls = json['APIcalls'];
+                site_ct = json['site_ct'];
+                lat_nm = json['lat_nm'];
+                lat_tn = json['lat_tn'];
+                total = json['total'];
+            } else if (ustatus == '0') {
+                APIcalls = json['APIcalls'];
+                site_ct = json['site_ct'];
+                lat_nm = json['lat_nm'];
+                lat_tn = json['lat_tn'];
+                total = json['total'];
+            } else {
+                statusmsg = json['statusmsg'];
+            }
         },
-        error: function(xhr, error) {
+        error: function (xhr, error) {
             // console.debug(xhr); console.debug(error);
 
         },
-        complete: function(xhr, status) {
-            SaveLoginDetails(APIcalls, phonename, userID, site_ct, total, lat_nm, lat_tn);
-            $('#phone_name').html(phonename);
-            //document.getElementById("username1").value = phonename;
-            //if (phonename.length == 0) {
-           //     $('#name_msg').html("Please add a name in My Details before adding sites.");
-           // } 
-            $('#my_sites_ct').html(site_ct);
-            $('#data_status').append("API: " + userID);
-            var town = getTownstore();
-            $('#loc_here').html(town);
-            $("#gps_results").html(town);
-            $('#lat_nm').html(lat_nm);
-            $('#lat_tn').html(lat_tn);
-            $('#total_sites').html(total);
+        complete: function (xhr, status) {
+            if (ustatus == '1') {
+                SaveLoginDetailsUP(APIcalls, userID, site_ct, total, lat_nm, lat_tn, username, password);
+                $('#phone_name').html(username);
+                $('#my_sites_ct').html("(" + site_ct + ")");
+                $('#data_status').append("API: " + userID);
+                var town = getTownstore();
+                $('#loc_here').html(town);
+                $("#gps_results").html(town);
+                $('#lat_nm').html(lat_nm);
+                $('#lat_tn').html(lat_tn);
+                $('#total_sites').html(total);
 
-            getWeather(1);
+                getWeather(1);
 
+                } else if (ustatus == '0') {
+                  SaveLoginDetails(APIcalls, username, userID, site_ct, total, lat_nm, lat_tn);
+                  $('#name_msg').html("Please add a name in My Details before adding sites.");
+                  var town = getTownstore();
+                $('#loc_here').html(town);
+                $("#gps_results").html(town);
+                $('#lat_nm').html(lat_nm);
+                $('#lat_tn').html(lat_tn);
+                $('#total_sites').html(total);
+                getWeather(1);
 
+            } else if (ustatus == '-1') {
+
+                $('#loginmsg').html("Incorrect username or password");
+            
+
+            } else if (ustatus == '-2') {
+
+                alert(statusmsg);
+                $('#allcontent').hide();
+            }
         }
     });
 
 }
+
 
 var timer_m;
 
@@ -1258,7 +1485,7 @@ function setMarker_site(map, bounds_map, lat, lng) {
     $('#lat_coord').html(markerp.position.lat().toString().slice(0, 9));
     $('#long_coord').html(markerp.position.lng().toString().slice(0, 9));
     });
-    $("#set_map_overlay").fadeOut();
+    $("#map_overlay").fadeOut();
 }
 
 function setMarker_move(map, bounds_map, lat, lng) {
@@ -1301,9 +1528,9 @@ if (confirm("Delete. Are you sure?")) {
             $("#sites_msg").html("Site deleted");
             var new_ct = parseInt(getSiteCtstore()) - 1;
             if (new_ct < 0) {
-                $("#my_sites_ct").html("0");
+                $('#my_sites_ct').html("(0)");
             } else {
-                $("#my_sites_ct").html(new_ct.toString());
+                $("#my_sites_ct").html($('#my_sites_ct').html("(" + new_ct.toString() + ")"));
             }
         }
     });
@@ -1322,27 +1549,26 @@ function ListSites() {
         data: "UserID=" + userID,
         dataType: "jsonp",
         success: function(json) {
-            $.each(json.sites, function(i, result) {
-                sites_html = sites_html + "<div id=\"place" + result.PID + "\"><div class=\"ui-grid-b\">" +
- "<div class=\"ui-block-a\"><div class=\"ui-bar ui-bar-c\"><p></p>" + result.name + "</div></div>" +
- "<div class=\"ui-block-b\"><div class=\"ui-bar ui-bar-c\"><a href=\"index.html#move_site\" data-role=\"button\" data-icon=\"gear\" data-iconpos=\"left\" data-mini=\"true\" data-theme=\"b\" data-inline=\"true\" onclick=\"move_site_map(" + result.latitude + "," + result.longitude + "," + result.PID + ")\">Move</a></div></div>" +
-"<div class=\"ui-block-c\"><div class=\"ui-bar ui-bar-c\"><a href=\"#\" data-role=\"button\" data-icon=\"delete\" data-iconpos=\"left\" data-mini=\"true\" data-theme=\"b\" data-inline=\"true\" onclick=\"DeleteSite(" + result.PID + ")\">Delete</a></div></div></div>" +
-                "<div class=\"ui-bar ui-bar-b\" style=\"height:2px\"></div></div>";
-               
+            $.each(json.sites, function (i, result) {
+                var para = "<li id=\"place" + result.PID + "\" class=\"ui-li ui-li-static ui-body-c\"><p class=\"ui-li-heading\"><h4>" + result.name + "</h4></p>" +
+                "<p class=\"ui-li-desc\"><a href=\"index.html#move_site\" data-role=\"button\" data-icon=\"gear\" data-iconpos=\"left\" data-mini=\"true\" data-theme=\"b\" data-inline=\"true\" onclick=\"move_site_map(" + result.latitude + "," + result.longitude + "," + result.PID + ")\">Move Location</a>" +
+                "<a href=\"#\" data-role=\"button\" data-icon=\"delete\" data-iconpos=\"left\" data-mini=\"true\" data-theme=\"b\" data-inline=\"true\" onclick=\"DeleteSite(" + result.PID + ")\">Delete</a></p></li>";
+                sites_html = sites_html + ultop + para + ulbtm;
             });
-             ct = json.ct;
+            ct = json.ct;
         },
-        error: function(xhr, error) {
+        error: function (xhr, error) {
             // console.debug(xhr); console.debug(error);
 
         },
-        complete: function(xhr, status) {
+        complete: function (xhr, status) {
 
-        $("#sites_list").html(sites_html).trigger('create');
+            $("#sites_list").html(sites_html).trigger('create');
             $("#sites_msg").html("Sites loaded. (" + ct + ")");
 
         }
     });
+
 
 }
 
@@ -1379,6 +1605,7 @@ function doSearch() {
 }
 
 function ListComments(PID) {
+  
 if (PID == 0) {
     PID = document.getElementById("hidPID").innerHTML;
     console.log(PID + "hid");
@@ -1400,11 +1627,7 @@ $.ajax({
     success: function(json) {
         $.each(json.cmts, function(i, result) {
         var para = "<li class=\"ui-li ui-li-static ui-body-c\"><p class=\"ui-li-heading\" style=\"color:#66A68B\">On " + result.datetime + ", " + result.username + " wrote:</p><p style=\"white-space: normal\" class=\"ui-li-desc\">" + result.comment + "</p></li>";
-            comments_html = comments_html + "<div class=\"ui-bar ui-bar-c\"><h4>" + result.datetime + "</h4></div>" +
-              "<div class=\"ui-bar ui-bar-c\"><h4>" + result.username + "</h4></div>" +
- "<div class=\"ui-bar ui-bar-c\"><h4>" + result.comment + "</h4></div>" +
- "<div class=\"ui-bar ui-bar-b\" style=\"height:1px\"></div>";
-            comments_html2 = comments_html2 + ultop + para + ulbtm;
+        comments_html2 = comments_html2 + ultop + para + ulbtm;
         });
         ct = json.ct;
     },
@@ -1418,7 +1641,8 @@ $.ajax({
         } else {
             $("#place_comments").html(comments_html2).trigger('create');
             //$("#place_comments").html(comments_html + "<div style=\"display:none\" id=\"hidPID\">" + PID + "</div>").trigger('create');
-            $("#addcomm").show();
+            $("#addcommentdiv").show();
+            $("#place_comments").show();
         }
         $("#map_msg").html(ct + " comments loaded.");
 
@@ -1513,7 +1737,7 @@ function GoogleMap(lat,lng) {
 
         var map = showMap();
         $('#place_name').html("&nbsp");
-        $('#place_name').html("&nbsp");
+      
         $('#place_comments').html("&nbsp");
         $('#comments_ct').html("&nbsp");
         $("#addcomm").hide();
@@ -1554,8 +1778,10 @@ function GoogleMap(lat,lng) {
 
 }
 
-function GoogleMap_set(lat, lng) {
-    $("#set_map_overlay").fadeIn();
+function GoogleMap_set(lat, lng)   {
+    $("#map_msg").html("Add a new sledging site.");
+    $('#place_name').html("Drag marker, add details and save.");
+    $("#map_overlay").fadeIn();
     var siteLatLng = lat + "," + lng;
     this.initialize = function() {
 
@@ -1567,7 +1793,7 @@ function GoogleMap_set(lat, lng) {
             center: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
-        var map = new google.maps.Map(document.getElementById("set_map_canvas"), mapOptions)
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions)
         var bounds;
         google.maps.event.addListener(map, 'bounds_changed', function() {
             bounds = map.getBounds();
@@ -1575,7 +1801,7 @@ function GoogleMap_set(lat, lng) {
         setMarker_site(map, bounds, lat, lng);
        
         var markerp = new google.maps.Marker({ 'position': siteLatLng, draggable: true, map: map });
-        $("#set_map_overlay").fadeOut();
+        $("#map_overlay").fadeOut();
         
         infowindow = new google.maps.InfoWindow({
             content: "holding..."
@@ -1623,7 +1849,7 @@ function GoogleMap_result(lat, lng, PID) {
     this.initialize = function() {
         var map = showMap();
         $('#place_name').html("&nbsp");
-        $('#place_name').html("&nbsp");
+ 
         $('#place_comments').html("&nbsp");
         $('#comments_ct').html("&nbsp");
         $("#addcomm").hide();
@@ -1779,6 +2005,9 @@ function startmap() {
 }
 
 function startmap_set() {
+   
+    $('#place_name').html("Preparing map ..");
+    
     clearTimeout(timerb);
     var position = getPosition();
     var latlng = position.split(',');
@@ -1791,7 +2020,7 @@ function startmap_set() {
 function startmap_move(lat, lng, PID) {
     clearTimeout(timerc);
     $("#MPID").html(PID);
-    $("#movePlaceName").html("name here");
+    
     console.log(name);
     var map = new GoogleMap_move(lat, lng, PID);
     map.initialize();
@@ -1800,8 +2029,8 @@ function startmap_move(lat, lng, PID) {
 function startmap_result(lat, lng, PID) {
     clearTimeout(timerd);
     $("#MPID").html(PID);
-    $("#movePlaceName").html("name here");
-    console.log(name);
+    $("#place_comments").slideUp();
+    $("#addcommentdiv").slideUp();
     var map = new GoogleMap_result(lat, lng, PID);
     map.initialize();
 }

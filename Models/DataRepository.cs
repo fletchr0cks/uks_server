@@ -66,6 +66,16 @@ namespace HIO.Models
 
         }
 
+        public string checkIP(string IPaddr)
+        {
+            var place = db.places
+                //.Where(p => p.PID == PID)
+                .First();
+
+            return "1";
+
+        }
+
         public void updatePhonename(int userID, string phonename)
         {
 
@@ -74,6 +84,19 @@ namespace HIO.Models
                 .First();
 
             user.Comment = phonename;
+            db.SubmitChanges();
+
+        }
+
+        public void updateuserpass(int userID, string username, string password)
+        {
+
+            var user = db.Users
+                .Where(u => u.UserID == userID)
+                .First();
+
+            user.Comment = username;
+            user.Password = password;
             db.SubmitChanges();
 
         }
@@ -96,6 +119,26 @@ namespace HIO.Models
             newevent.Event = type;
             newevent.Datetime = DateTime.Now;
             db.hio_events.InsertOnSubmit(newevent);
+            db.SubmitChanges();
+        }
+
+        public void AddSnow(string cm, string location, string name)
+        {
+             hio_event newevt = new hio_event();
+             newevt.Datetime = DateTime.Now;
+             newevt.Event = cm;
+             newevt.Type = "Snow";
+            db.hio_events.InsertOnSubmit(newevt);
+            db.SubmitChanges();
+        }
+
+        public void AddColdest(string temp, string location, string name)
+        {
+            hio_event newevt = new hio_event();
+            newevt.Datetime = DateTime.Now;
+            newevt.Event = temp;
+            newevt.Type = "Temp";
+            db.hio_events.InsertOnSubmit(newevt);
             db.SubmitChanges();
         }
 

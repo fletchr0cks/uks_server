@@ -155,6 +155,28 @@ namespace HIO.Controllers
             return new JsonpResult(new { sites = data, ct = data.Count() });
         }
 
+        public ActionResult ListAllSites()
+        {
+            var dataContext = new hioDataContext();
+
+            var data = from pl in dataContext.places
+                       orderby pl.Name descending
+                       select pl;
+
+            return View(data);
+        }
+
+        public ActionResult CommentsPartial(int PID)
+        {
+            var dataContext = new hioDataContext();
+
+            var data = from pl in dataContext.comments
+                       //orderby pl.Name descending
+                       select pl;
+
+            return PartialView("CommentsPartial", data);
+        }
+
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult GetSitesInRange(string bounds)
         {
@@ -225,17 +247,138 @@ namespace HIO.Controllers
             return new JsonpResult(new { sites = data, ct = data.Count() });
         }
 
+        public ActionResult SaveBrowser(string username, string password, string newu)
+        {
+            var dataContext = new hioDataContext();
+
+             var ipaddr = Request.ServerVariables["REMOTE_ADDR"];
+
+                var ipstatus = dataRepository.checkIP(ipaddr);
+                if (ipstatus == "-1")
+                {
+                    var statusmsg = "No";
+                    //(from u in dataContext.notices
+                    //                 where u.NID == 3
+                    //               select u).First().Ann_content;
+                    return new JsonpResult(new { status = "-2", statusmsg = statusmsg });
+
+                }
+                else
+                {
+
+
+
+
+                    int APIcallsAllowed = (from u in dataContext.Settings
+                                           where u.id == 1
+                                           select u).First().APIcalls;
+                    var siteCount = "0";
+                    int userID;
+                   
+                    int APIcalls_today = (from ev in dataContext.hio_events
+                                          where ev.Event == "API"
+                                          where ev.Datetime >= DateTime.Now.AddDays(-1)
+                                          select ev).Count();
+
+                    var APIcalls = "0";
+                    if (APIcallsAllowed - APIcalls_today > 0)
+                    {
+                        APIcalls = "1";
+                    }
+                    else
+                    {
+                        APIcalls = "0";
+                    }
+
+
+                    var total_sites = (from ev in dataContext.places
+                                       where ev.Flag >= 0
+                                       select ev).Count();
+
+                    var latest_pl = from p in dataContext.places
+                                    where p.Flag >= 0
+                                    orderby p.PID descending
+                                    select p;
+
+                    var latest_nm = latest_pl.First().Username;
+                    var latest_town = latest_pl.First().Town;
+
+                    if (newu == "true")
+                    {
+                        //adduser0
+                        var usertype = "New User";
+                        User newuser = new User();
+                        newuser.PID = "nondroid";
+                        newuser.Timestamp = DateTime.Now;
+                        newuser.Comment = username;
+                        newuser.Password = password;
+                        //add user, get ID, write event
+                        var newuserID = dataRepository.AddUser(newuser);
+                        userID = Convert.ToInt32(newuserID);
+                        dataRepository.AddLogin(userID, usertype);
+
+                        return new JsonpResult(new { lat_nm = latest_nm, lat_tn = latest_town, total = total_sites, APIcalls = APIcalls, site_ct = siteCount, userID = newuserID });
+
+                    }
+                    else
+                    {
+
+                        if (username == "undefined" && password == "undefined")
+                        {
+                            return new JsonpResult(new { lat_nm = latest_nm, lat_tn = latest_town, total = total_sites, APIcalls = APIcalls, site_ct = siteCount, status = "0" });
+                            //not in db
+
+                        }
+                        else
+                        {
+                            //are in db
+                            var userchk = (from u in dataContext.Users
+                                           where (u.Comment == username && u.Password == password)
+                                           select u).Count();
+                            if (userchk == 1)
+                            {
+                                //password ok
+                                var usertype = "Existing";
+                                var userd = from u in dataContext.Users
+                                            where (u.Comment == username && u.Password == password)
+                                            select u;
+
+                                userID = userd.First().UserID;
+
+                                dataRepository.AddLogin(Convert.ToInt32(userID), usertype);
+                                dataRepository.updateUser(Convert.ToInt32(userID));
+                                siteCount = dataRepository.SiteCount(Convert.ToInt32(userID));
+
+                                return new JsonpResult(new { lat_nm = latest_nm, lat_tn = latest_town, total = total_sites, APIcalls = APIcalls, userID = userID, site_ct = siteCount, status = "1" });
+
+
+
+                            }
+                            else
+                            {
+                                //incorrect deets
+                                return new JsonpResult(new { status = "-1" });
+                            }
+
+
+                        }
+
+                    }
+                }
+        }
+
+
         public ActionResult SaveID(string phoneID)
         {
             var dataContext = new hioDataContext();
 
             var userchk = (from u in dataContext.Users
                            where u.PID == phoneID
-                               select u).Count();
+                           select u).Count();
 
             int APIcallsAllowed = (from u in dataContext.Settings
-                           where u.id == 1
-                               select u).First().APIcalls;
+                                   where u.id == 1
+                                   select u).First().APIcalls;
 
             int userID;
             var siteCount = "0";
@@ -247,10 +390,10 @@ namespace HIO.Controllers
                 var usertype = "Existing";
                 var userd = from u in dataContext.Users
                             where u.PID == phoneID
-                             select u;
+                            select u;
                 userID = userd.First().UserID;
                 phonename = userd.First().Comment;
-                dataRepository.AddLogin(Convert.ToInt32(userID),usertype);
+                dataRepository.AddLogin(Convert.ToInt32(userID), usertype);
                 dataRepository.updateUser(Convert.ToInt32(userID));
                 siteCount = dataRepository.SiteCount(Convert.ToInt32(userID));
 
@@ -270,14 +413,17 @@ namespace HIO.Controllers
 
 
             int APIcalls_today = (from ev in dataContext.hio_events
-                           where ev.Event == "API"
-                            where ev.Datetime >= DateTime.Now.AddDays(-1)
-                           select ev).Count();
+                                  where ev.Event == "API"
+                                  where ev.Datetime >= DateTime.Now.AddDays(-1)
+                                  select ev).Count();
 
             var APIcalls = "0";
-            if (APIcallsAllowed - APIcalls_today > 0) {
+            if (APIcallsAllowed - APIcalls_today > 0)
+            {
                 APIcalls = "1";
-            } else { 
+            }
+            else
+            {
                 APIcalls = "0";
             }
 
@@ -295,8 +441,8 @@ namespace HIO.Controllers
             var latest_town = latest_pl.First().Town;
 
             //new { gloss_list = GlossaryList, answer = desc }
-            return new JsonpResult(new { lat_nm = latest_nm, lat_tn = latest_town, total = total_sites, APIcalls = APIcalls, userID = userID, Name = phonename, site_ct = siteCount });            
-        }
+            return new JsonpResult(new { lat_nm = latest_nm, lat_tn = latest_town, total = total_sites, APIcalls = APIcalls, userID = userID, Name = phonename, site_ct = siteCount });
+        }   
 
          public ActionResult GetWeather(int userID, string latval, string longval)
         {
@@ -331,6 +477,20 @@ namespace HIO.Controllers
              return new JsonpResult("Done");
          }
 
+         public ActionResult AddSnowEvent(string cm, string location, string name)
+         {
+             dataRepository.AddSnow(cm, location, name);
+             
+             return new JsonpResult("Done");
+         }
+
+         public ActionResult AddColdest(string temp, string location, string name)
+         {
+             dataRepository.AddColdest(temp, location, name);
+
+             return new JsonpResult("Done");
+         }
+
          public ActionResult MovePlace(string latval, string longval, int PID)
          {          
              dataRepository.MovePlace(latval, longval, PID);            
@@ -346,6 +506,15 @@ namespace HIO.Controllers
          public ActionResult SavePhonename(string phonename, int userid)
          {
              dataRepository.updatePhonename(userid,phonename);
+             return new JsonpResult("Done");
+         }
+
+         public ActionResult SaveLoginDetails(string phonename, int userid, string password)
+         {
+             
+             
+             
+             //dataRepository.updateuserpass(userid, phonename, password);
              return new JsonpResult("Done");
          }
 
