@@ -664,8 +664,8 @@ function logWeather(userid,latval,longval) {
 
     $.ajax({
         type: "POST",
-        url: "http://uksledge.apphb.com/Home/GetWeather",
-        //url: "http://localhost:3192/Home/GetWeather",
+        //url: "http://uksledge.apphb.com/Home/GetWeather",
+        url: "http://localhost:3192/Home/GetWeather",
         data: "userID=" + userid + "&latval=" + latval + "&longval=" + longval,
         dataType: "text/plain",
         success: function(response) {
@@ -790,37 +790,63 @@ function closeDetails() {
 $('#my_details').dialog('close');
 }
 
-function Edit() {
-    
-    //var phonename = getPhoneNamestore();
-    //alert(phonename);
-    //console.log(phonename);
-    //$('#loginmsg').html(phonename.toString);
-    //if (phonename == "undefined") {
-        //$('#loginmsg').html("hihi");
-        $('#setlogin').show();
-   // } else {
-    //    $('#changelogin').show();
-    //}
-//check for login details
-
+function Login() {
+    $('#loginBtns').hide();
+    $('#doLogin').show();
+    $('#setLogin').hide();
 }
 
-function saveLogin() {
-    alert("here");
+function newLogin() {
+    $('#loginBtns').hide();
+    $('#setLogin').show();
+    $('#doLogin').hide();
+}
+
+function Edit() {
+    $('#loginBtns').show();
+    var phonename = getPhoneNamestore();
+    $('#changeName').hide();
+    $('#changePass').hide();
+    $('#changelogin').hide();
+    $('#setLogin').hide();
+    $('#doLogin').hide();
+    if (phonename == "undefined") {
+        $('#loginBtns').show();
+       // $('#setlogin').show();
+       // 
+    } else {
+        $('#loginBtns').hide();
+        $('#changelogin').show();
+        $('#phonename').html(phonename);
+       
+    }
+}
+
+function changeName() {
+    $('#changeName').slideDown();
+    $('#changePass').slideUp();
+}
+
+function changePass() {
+    $('#changePass').slideDown();
+    $('#changeName').slideUp();
+}
+
+
+
+function saveNewLogin() {
     var username = document.getElementById("usernameid").value;
     var pass = document.getElementById("passid").value;
     var pass2 = document.getElementById("passid2").value;
     var userid = getUserIDstore();
-    //
-    if (pass != pass2) {
-        $('#loginmsg').html("Passwords don't match.");
+    if ((pass != pass2) || (username.length < 4) || (pass.length < 4)) {
+        $('#loginmsg').html("Passwords don't match, or Password or Name is shorter than 3 letters.");
     } else {
         $.mobile.loading('show', {
             text: 'foo',
             textVisible: true,
             theme: 'a',
-            html: "<p>Saving name ...</p>"
+            html: "<p>Saving details and logging in ...</p>"
         });
     var userID;
     var APIcalls;
@@ -828,7 +854,7 @@ function saveLogin() {
     var lat_nm;
     var lat_tn;
     var total;
-   
+
     $.ajax({
         type: "POST",
         //url: "http://localhost:3192/Home/SaveBrowser",
@@ -836,7 +862,7 @@ function saveLogin() {
         data: "newu=true&username=" + username + "&password=" + pass,
         dataType: "jsonp",
         success: function (json) {
-            var jsontext = JSON.stringify(json);
+            //var jsontext = JSON.stringify(json);
             userID = json['userID'];
             APIcalls = json['APIcalls'];
             site_ct = json['site_ct'];
@@ -845,33 +871,32 @@ function saveLogin() {
             total = json['total'];
 
         },
-        error: function(xhr, error) {
+        error: function (xhr, error) {
             // console.debug(xhr); console.debug(error);
 
         },
-        complete: function(xhr, status) {
+        complete: function (xhr, status) {
             $("#phone_name").html(username);
             $('#name_msg').html("");
             $("#add_site").removeClass("ui-disabled");
             $("#add_site").addClass("ui-enabled");
             $("#my_sites").removeClass("ui-disabled");
-            $("#my_sites").addClass("ui-enabled");
+            $("#my_sites").addClass("ui-enabled"); 
             SaveLoginDetailsUP(APIcalls, userID, site_ct, total, lat_nm, lat_tn, username, pass);
             $('#phone_name').html(username);
             //document.getElementById("username1").value = phonename;
 
             $('#my_sites_ct').html("(" + site_ct + ")");
-            
+
             var town = getTownstore();
             $('#loc_here').html(town);
             $("#gps_results").html(town);
             $('#lat_nm').html(lat_nm);
             $('#lat_tn').html(lat_tn);
             $('#total_sites').html(total);
-            closeDetails();
-            //getWeather(1);
-
-            
+            $("#loginmsg").html("Login details saved.");
+            $("#setlogin").slideUp();
+           
             //load_data_db();
             $.mobile.loading('hide');
 
@@ -879,6 +904,81 @@ function saveLogin() {
     });
 
 }
+
+}
+
+
+function saveLogin() {
+    var username = document.getElementById("loginnameID").value;
+    var pass = document.getElementById("loginpassID").value;
+    var userid = getUserIDstore();
+   
+        $.mobile.loading('show', {
+            text: 'foo',
+            textVisible: true,
+            theme: 'a',
+            html: "<p>Logging in ...</p>"
+        });
+        var userID;
+        var APIcalls;
+        var site_ct;
+        var lat_nm;
+        var lat_tn;
+        var total;
+        var logstatus;
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:3192/Home/SaveBrowser",
+            //url: "http://uksledge.apphb.com/Home/SaveBrowser",
+            data: "newu=false&username=" + username + "&password=" + pass,
+            dataType: "jsonp",
+            success: function (json) {
+                var jsontext = JSON.stringify(json);
+                logstatus = json['status'];
+              
+                userID = json['userID'];
+                APIcalls = json['APIcalls'];
+                site_ct = json['site_ct'];
+                lat_nm = json['lat_nm'];
+                lat_tn = json['lat_tn'];
+                total = json['total'];
+
+            },
+            error: function (xhr, error) {
+                // console.debug(xhr); console.debug(error);
+
+            },
+            complete: function (xhr, status) {
+                if (logstatus == "-1") {
+                    $('#loginmsg').html("Incorrect details.");
+                    $.mobile.loading('hide');
+                } else {
+                    $("#phone_name").html(username);
+                    $('#name_msg').html("");
+                    $("#add_site").removeClass("ui-disabled");
+                    $("#add_site").addClass("ui-enabled");
+                    $("#my_sites").removeClass("ui-disabled");
+                    $("#my_sites").addClass("ui-enabled");
+                    SaveLoginDetailsUP(APIcalls, userID, site_ct, total, lat_nm, lat_tn, username, pass);
+                    $('#phone_name').html(username);
+                    //document.getElementById("username1").value = phonename;
+
+                    $('#my_sites_ct').html("(" + site_ct + ")");
+
+                    var town = getTownstore();
+                    $('#loc_here').html(town);
+                    $("#gps_results").html(town);
+                    $('#lat_nm').html(lat_nm);
+                    $('#lat_tn').html(lat_tn);
+                    $('#total_sites').html(total);
+                    $("#loginmsg").html("Logged in.");
+                    $("#doLogin").slideUp();
+                    $.mobile.loading('hide');
+                }
+            }
+        });
+
+    
 
 }
 
@@ -1291,8 +1391,8 @@ function load_data_db() {
     var statusmsg;
     $.ajax({
         type: "POST",
-        url: "http://uksledge.apphb.com/Home/SaveBrowser",
-        //url: "http://localhost:3192/Home/SaveBrowser",
+        //url: "http://uksledge.apphb.com/Home/SaveBrowser",
+        url: "http://localhost:3192/Home/SaveBrowser",
         data: "newu=false&username=" + username + "&password=" + password,
         dataType: "jsonp",
         success: function (json) {
@@ -1576,13 +1676,15 @@ function doSearch() {
     var search_str = document.getElementById("searchid").value;
     var sites_html = "<ul data-role=\"listview\" data-theme=\"a\" data-inset=\"true\">";
     var ct = 0;
+    var statusck
     $.ajax({
         type: "GET",
         //url: "http://localhost:3192/Home/ListPlaces",
         url: "http://uksledge.apphb.com/Home/ListPlaces",
         data: "search_str=" + search_str,
         dataType: "jsonp",
-        success: function(json) {
+        success: function (json) {
+            statusck = json['status'];
             $.each(json.sites, function(i, result) {
             sites_html = sites_html + "<li><a href=\"#\" onClick=\"search_result_map(" +result.latitude + "," + result.longitude + "," + result.PID + ")\">" + result.town + ", " + result.name + ". Added by " + result.username + "</a></li>";
                 ct = json.ct;

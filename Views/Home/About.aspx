@@ -29,8 +29,29 @@
 
 <div><h3>Login Details:</h3></div>
 <div id="loginmsg"></div>
-<div id="setlogin" style="display:none">
-
+<div id="loginBtns">
+<div class="ui-grid-a">
+	<div class="ui-block-a"><div data-role="button" data-mini="true" data-theme="b" data-inline="true" onclick="Login()">Login</div></div>
+	<div class="ui-block-b"><div data-role="button" data-mini="true" data-theme="b" data-inline="true" onclick="newLogin()">Create User</div></div>
+	</div>
+</div>
+<div id="doLogin">
+<div class="ui-grid-a">
+	<div class="ui-block-a"><p></p>Name</div>
+	<div class="ui-block-b"><input type="text" name="username" id="loginnameID" value="" /></div>
+	</div>
+	<div class="ui-grid-a">
+	<div class="ui-block-a"><p></p>Password</div>
+	<div class="ui-block-b"><input type="text" name="pass" id="loginpassID" value="" /></div>
+	</div>
+	<div>
+    <div class="ui-grid-a">
+	<div class="ui-block-a"></div>
+	<div class="ui-block-b"><div data-role="button" data-mini="true" data-theme="b" data-inline="true" onclick="saveLogin()">Login</div></div>
+	</div>
+    </div>
+</div>
+<div id="setLogin">
 <div class="ui-grid-a">
 	<div class="ui-block-a"><p></p>Name</div>
 	<div class="ui-block-b"><input type="text" name="username" id="usernameid" value="" /></div>
@@ -43,10 +64,36 @@
 	<div class="ui-block-a"><p></p>Confirm Password</div>
 	<div class="ui-block-b"><input type="text" name="pass2" id="passid2" value="" /></div>
 	</div>
-	<div><div data-role="button" data-icon="delete" data-iconpos="left" data-mini="true" data-theme="b" data-inline="true" onclick="saveLogin()">Save</div></div>
+    <div>
+    <div class="ui-grid-a">
+	<div class="ui-block-a"></div>
+	<div class="ui-block-b"><div data-role="button" data-mini="true" data-theme="b" data-inline="true" onclick="saveNewLogin()">Save</div></div>
+	</div>
+    </div>
 </div>
-<div id="havelogin" style="display:none">
-<div data-theme="b" data-role="button" onclick="changeLogin()">Change Details</div>
+<div id="changelogin">
+<div class="ui-grid-a">
+	<div class="ui-block-a"><h4>Name: <div style="display:inline" id="phonename"></div></h4></div>
+	<div class="ui-block-b"><div data-theme="b" data-role="button" onclick="changeName()">Change Name</div><div data-theme="b" data-role="button" onclick="changePass()">Change Password</div></div>
+	</div>
+</div>
+
+<div id="changeName">
+<div class="ui-grid-a">
+	<div class="ui-block-a"><p></p>New Name:</div>
+	<div class="ui-block-b"><input type="text" name="newname" id="newnameID" value="" /></div>
+	</div>
+</div>
+
+<div id="changePass">
+<div class="ui-grid-a">
+	<div class="ui-block-a"><p></p>New Password:</div>
+	<div class="ui-block-b"><input type="text" name="newpass" id="newpassID1" value="" /></div>
+	</div>
+<div class="ui-grid-a">
+	<div class="ui-block-a"><p></p>Confirm Password:</div>
+	<div class="ui-block-b"><input type="text" name="newpass2" id="newpassID2" value="" /></div>
+	</div>
 </div>
 
 <p></p>

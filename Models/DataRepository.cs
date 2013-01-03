@@ -66,13 +66,26 @@ namespace HIO.Models
 
         }
 
-        public string checkIP(string IPaddr)
+        public int checkIP(string IPaddr)
         {
-            var place = db.places
-                //.Where(p => p.PID == PID)
-                .First();
+            int ipchk = (from u in db.IPaddresses
+                                   where (u.IPaddr == IPaddr && u.Timestamp.AddSeconds(20) > DateTime.Now)
+                                   select u).Count();
 
-            return "1";
+            
+            return ipchk;
+
+        }
+
+        public void logIP(string IPaddr)
+        {
+            IPaddress ip = new IPaddress();
+            ip.IPaddr = IPaddr;
+            ip.Timestamp = DateTime.Now;
+            ip.UserID = 10;
+            db.IPaddresses.InsertOnSubmit(ip);
+
+            db.SubmitChanges();
 
         }
 
@@ -209,6 +222,11 @@ namespace HIO.Models
         public void Add(hio_event ev)
         {
             db.hio_events.InsertOnSubmit(ev);
+        }
+
+        public void Add(IPaddress ip)
+        {
+            db.IPaddresses.InsertOnSubmit(ip);
         }
 
         public void Add(user_location loc)

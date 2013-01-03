@@ -227,34 +227,46 @@ namespace HIO.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult ListPlaces(string search_str)
         {
-            var dataContext = new hioDataContext();
+              var ipaddr = Request.ServerVariables["REMOTE_ADDR"];
+             dataRepository.logIP(ipaddr);
+                var ipstatus = dataRepository.checkIP(ipaddr);
+                if (ipstatus >= 3)
+                {
+                    var statusmsg = "No";
+                    return new JsonpResult(new { status = "-2", statusmsg = statusmsg });
+                }
+                else
+                {
 
-            var data = from pl in dataContext.places
-                       join u in dataContext.Users on pl.UserID equals u.UserID
-                       where (pl.Name.Contains(search_str) || pl.Town.Contains(search_str) || u.Comment.Contains(search_str))
-                       where pl.Flag >= 0
-                       orderby pl.Name ascending
-                       select new
-                       {
-                           latitude = pl.LatVal,
-                           longitude = pl.LongVal,
-                           name = pl.Name,
-                           PID = pl.PID,
-                           town = pl.Town,
-                           username = u.Comment
-                       };
+                    var dataContext = new hioDataContext();
 
-            return new JsonpResult(new { sites = data, ct = data.Count() });
+                    var data = from pl in dataContext.places
+                               join u in dataContext.Users on pl.UserID equals u.UserID
+                               where (pl.Name.Contains(search_str) || pl.Town.Contains(search_str) || u.Comment.Contains(search_str))
+                               where pl.Flag >= 0
+                               orderby pl.Name ascending
+                               select new
+                               {
+                                   latitude = pl.LatVal,
+                                   longitude = pl.LongVal,
+                                   name = pl.Name,
+                                   PID = pl.PID,
+                                   town = pl.Town,
+                                   username = u.Comment
+                               };
+                    return new JsonpResult(new { sites = data, ct = data.Count() });
+                }
         }
 
         public ActionResult SaveBrowser(string username, string password, string newu)
         {
             var dataContext = new hioDataContext();
+           
 
              var ipaddr = Request.ServerVariables["REMOTE_ADDR"];
-
+             dataRepository.logIP(ipaddr);
                 var ipstatus = dataRepository.checkIP(ipaddr);
-                if (ipstatus == "-1")
+                if (ipstatus >= 3)
                 {
                     var statusmsg = "No";
                     //(from u in dataContext.notices
@@ -265,10 +277,6 @@ namespace HIO.Controllers
                 }
                 else
                 {
-
-
-
-
                     int APIcallsAllowed = (from u in dataContext.Settings
                                            where u.id == 1
                                            select u).First().APIcalls;
@@ -449,11 +457,13 @@ namespace HIO.Controllers
             dataRepository.APIcall(userID);
             //dataRepository.UserLoc(userID,latval,longval);
 
-            return new JsonpResult("Done");
+            return new JsonpResult(new { status = "Done" });
         }
 
          public ActionResult SavePlace(int userID, string latval, string longval, string placename, string comment, string town, string username)
          {
+
+
              place newplace = new place();
              newplace.UserID = userID;
              newplace.LatVal = Convert.ToDecimal(latval);
