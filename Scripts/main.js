@@ -665,8 +665,8 @@ function logWeather(userid,latval,longval) {
 
     $.ajax({
         type: "POST",
-        //url: "http://uksledge.apphb.com/Home/GetWeather",
-        url: "http://localhost:3192/Home/GetWeather",
+        url: "http://uksledge.apphb.com/Home/GetWeather",
+        //url: "http://localhost:3192/Home/GetWeather",
         data: "userID=" + userid + "&latval=" + latval + "&longval=" + longval,
         dataType: "text/plain",
         success: function(response) {
@@ -929,8 +929,8 @@ function saveLogin() {
         var logstatus;
         $.ajax({
             type: "POST",
-            url: "http://localhost:3192/Home/SaveBrowser",
-            //url: "http://uksledge.apphb.com/Home/SaveBrowser",
+            //url: "http://localhost:3192/Home/SaveBrowser",
+            url: "http://uksledge.apphb.com/Home/SaveBrowser",
             data: "newu=false&username=" + username + "&password=" + pass,
             dataType: "jsonp",
             success: function (json) {
@@ -1390,8 +1390,8 @@ function load_data_db() {
     var statusmsg;
     $.ajax({
         type: "POST",
-        //url: "http://uksledge.apphb.com/Home/SaveBrowser",
-        url: "http://localhost:3192/Home/SaveBrowser",
+        url: "http://uksledge.apphb.com/Home/SaveBrowser",
+        //url: "http://localhost:3192/Home/SaveBrowser",
         data: "newu=false&username=" + username + "&password=" + password,
         dataType: "jsonp",
         success: function (json) {
