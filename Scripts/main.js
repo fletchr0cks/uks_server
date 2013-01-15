@@ -1291,12 +1291,9 @@ function save_id() {
         theme: 'a',
         html: "<p>Please be patient ...</p><p></p><p>Checking connection id</p>"
     });
-    try {
-        var phoneid = device.uuid;
-       // $("#uuid").html(phoneid);
-} catch (Error) {
+    
     var phoneid = "nondroid";
-    }
+    
     $.ajax({
         type: "POST",
         url: "http://uksledge.apphb.com/Home/Save",
@@ -1314,7 +1311,7 @@ function save_id() {
             //alert("save error" + data);
         },
         complete: function(xhr, status) {
-        $("#phone_name").html("Dave");
+        
         GetGPSData();
         $("#data_status").html("Almost done...");
             
