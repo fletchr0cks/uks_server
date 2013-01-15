@@ -1,7 +1,5 @@
 
 var deviceInfo = function() {
-    //document.getElementById("platform").innerHTML = device.platform;
-    //document.getElementById("version").innerHTML = device.version;
     try {
         document.getElementById("uuid").innerHTML = device.uuid;
         document.getElementById("uuidi").innerHTML = device.uuid;
@@ -9,9 +7,7 @@ var deviceInfo = function() {
     } catch (Error) {
         document.getElementById("uuid").innerHTML = "PC";
     }
-    //document.getElementById("width").innerHTML = screen.width;
-    //document.getElementById("height").innerHTML = screen.height;
-    //document.getElementById("colorDepth").innerHTML = screen.colorDepth;
+    
 };
 
 var getLocation = function() {
@@ -162,7 +158,7 @@ var suc = function(p) {
 };
 
 var refreshGPSLocation = function() {
-
+    $("#gps_results").html("Refreshing ...");
     var suc = function(p) {
         var GPS_saved = SaveGPSLocation(p.coords.latitude, p.coords.longitude);
         if (GPS_saved == 1) {
@@ -550,13 +546,18 @@ function FTLcheck() {
             $("#place_comments").slideUp();
             $("#addcommentdiv").slideUp();
             load_data_refresh();
+        } else {
+            $("#saveSitem").hide();
+            $("#saveMovedSite").hide();
+            load_data_refresh();
         }
     });
 
- 
 
 
-//        
+
+    //        $("#saveSitem").show();
+    //$("#saveMovedSite").show();
 //        
      
  var store = new Lawnchair({
@@ -1073,11 +1074,16 @@ function refreshPage(msg) {
         showLoadMsg: false,
         reloadPage: true,
         html: "<p>" + msg + "</p>"
-
     }
   );
-
+ showmap();
 }
+
+function close_refresh() {
+    location.reload(true);
+}
+
+
 
 function HideComments() {
     $("#place_comments").slideUp();
@@ -1085,7 +1091,7 @@ function HideComments() {
 }
 
 function saveMovedSite() {
-    $("#set_map_overlaym").fadeIn();
+    $("#map_overlay").fadeIn();
     $.mobile.loading('show', {
         text: 'foo',
         textVisible: true,
@@ -1103,23 +1109,18 @@ function saveMovedSite() {
         url: "http://uksledge.apphb.com/Home/MovePlace",
         data: "latval=" + latval + "&longval=" + longval + "&PID=" + PID,
         dataType: "jsonp",
-        success: function(json) {
+        success: function (json) {
             var jsontext = JSON.stringify(json);
 
         },
-        error: function(xhr, error) {
+        error: function (xhr, error) {
             // console.debug(xhr); console.debug(error);
             $("#saveSitem").html("Move Failed");
 
         },
-        complete: function(xhr, status) {
-            //$("#saveSitem").html("New location saved");
-        $.mobile.loading('show', {
-            text: 'foo',
-            textVisible: true,
-            theme: 'a',
-            html: "<p>Saved. Press Menu to return.</p>"
-        });
+        complete: function (xhr, status) {
+            $("#saveSitem").html("New location saved");
+            location.reload("/",true);
             //$.mobile.changePage('index.html#one', { allowSamePageTransition: true, transition: "none" });
 
         }
@@ -1228,8 +1229,10 @@ $.ajax({
 }
 
 
-var start = function() {
 
+
+var start = function () {
+   
     popTwitter();
     showmap();
     $.mobile.loading('hide');
@@ -1239,13 +1242,13 @@ var start = function() {
     $("#my_details_link").removeClass("ui-disabled");
     $("#my_details_link").addClass("ui-enabled");
     var username = getPhoneNamestore();
-       if (username != "undefined") {
-           $("#add_site").removeClass("ui-disabled");
-           $("#add_site").addClass("ui-enabled");
-    
-           $("#my_sites").removeClass("ui-disabled");
-           $("#my_sites").addClass("ui-enabled");
-      }
+    if (username != "undefined") {
+        $("#add_site").removeClass("ui-disabled");
+        $("#add_site").addClass("ui-enabled");
+
+        $("#my_sites").removeClass("ui-disabled");
+        $("#my_sites").addClass("ui-enabled");
+    }
     $("#search_link").removeClass("ui-disabled");
     $("#search_link").addClass("ui-enabled");
 
@@ -1275,10 +1278,9 @@ var start = function() {
 };
 
 
-function init() {
-
-    //document.addEventListener("deviceready", FTLcheck, false);
-   // showmap();
+function backtostart() {
+    location.replace("/");
+    start();
   
 }
 
@@ -1322,7 +1324,7 @@ function save_id() {
 }
 
 function load_data_refresh() {
-    var browser_w = parseInt($(document).width()) - 20;
+    var browser_w = parseInt($(document).width()) - 30;
     $('#data_status').append("widths: " + browser_w);
     $('#map_overlay').css('width', browser_w.toString() + 'px');
     $('#set_map_overlaym').css('width', browser_w.toString() + 'px');
@@ -1364,7 +1366,7 @@ function load_data_refresh() {
 
 //get name + userID, API calls #
 function load_data_db() {
-    var browser_w = parseInt($(document).width()) - 20;
+    var browser_w = parseInt($(document).width()) - 30;
     $('#data_status').append("widths: " + browser_w);
     $('#map_overlay').css('width', browser_w.toString() + 'px');
     $('#set_map_overlaym').css('width', browser_w.toString() + 'px');
@@ -1603,7 +1605,7 @@ function setMarker_move(map, bounds_map, lat, lng) {
         $('#lat_coordm').html(markerp.position.lat().toString().slice(0,9));
         $('#long_coordm').html(markerp.position.lng().toString().slice(0,9));
     });
-    $("#set_map_overlaym").fadeOut();
+    $("#map_overlay").fadeOut();
 }
 
 function DeleteSite(pid) {
@@ -1638,7 +1640,9 @@ if (confirm("Delete. Are you sure?")) {
 }
 
 function ListSites() {
-    
+    $("#sites_msg").html("Downloading ..");
+    var ultop = "<ul data-role=\"listview\" data-inset=\"true\" class=\"ui-listview\">";
+    var ulbtm = "</ul>";
     var sites_html = "";
     var ct = 0;
     var userID = getUserIDstore();
@@ -1835,14 +1839,14 @@ function GoogleMap(lat,lng) {
     //alert(lat + lng);
     this.initialize = function() {
 
-        var map = showMap();
+        var map = showMapa();
         $('#place_name').html("&nbsp");
       
         $('#place_comments').html("&nbsp");
         $('#comments_ct').html("&nbsp");
         $("#addcomm").hide();
     }
-    var showMap = function() {
+    var showMapa = function() {
     ;
         var mapOptions = {
             zoom: 16,
@@ -1878,16 +1882,17 @@ function GoogleMap(lat,lng) {
 
 }
 
-function GoogleMap_set(lat, lng)   {
+function GoogleMap_set(lat, lng) {
+    document.getElementById("map_canvas").value = "";
     $("#map_msg").html("Add a new sledging site.");
     $('#place_name').html("Drag marker, add details and save.");
     $("#map_overlay").fadeIn();
     var siteLatLng = lat + "," + lng;
     this.initialize = function() {
 
-        var map = showMap();
+        var map = showMapb();
     }
-    var showMap = function() {
+    var showMapb = function() {
         var mapOptions = {
             zoom: 16,
             center: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
@@ -1913,7 +1918,7 @@ function GoogleMap_set(lat, lng)   {
 }
 
 function GoogleMap_move(lat, lng, PID) {
-    $("#set_map_overlaym").fadeIn();
+    $("#map_overlay").fadeIn();
     var siteLatLng = lat + "," + lng;
     this.initialize = function() {
 
@@ -1925,7 +1930,7 @@ function GoogleMap_move(lat, lng, PID) {
             center: new google.maps.LatLng(parseFloat(lat), parseFloat(lng)),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
-        var map = new google.maps.Map(document.getElementById("set_map_canvasm"), mapOptions)
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions)
         var bounds;
         google.maps.event.addListener(map, 'bounds_changed', function() {
             bounds = map.getBounds();
@@ -1933,7 +1938,7 @@ function GoogleMap_move(lat, lng, PID) {
         setMarker_move(map, bounds, lat, lng);
 
         var markerp = new google.maps.Marker({ 'position': siteLatLng, draggable: true, map: map });
-        $("#set_map_overlaym").fadeOut();
+        $("#map_overlay").fadeOut();
 
         infowindow = new google.maps.InfoWindow({
             content: "holding..."
@@ -1947,14 +1952,14 @@ function GoogleMap_move(lat, lng, PID) {
 function GoogleMap_result(lat, lng, PID) {
     var siteLatLng = lat + "," + lng;
     this.initialize = function() {
-        var map = showMap();
+        var map = showMapd();
         $('#place_name').html("&nbsp");
  
         $('#place_comments').html("&nbsp");
         $('#comments_ct').html("&nbsp");
         $("#addcomm").hide();
     }
-    var showMap = function() {
+    var showMapd = function() {
         ;
         var mapOptions = {
             zoom: 16,
@@ -2091,10 +2096,10 @@ var timera;
 var timerb;
 var timerc;
 var timerd;
+
 function startmap() {
     clearTimeout(timera);
     var position = getPosition();
-
     var latlng = position.split(',');
     var lat = latlng[0];
     var lng = latlng[1];
@@ -2119,9 +2124,12 @@ function startmap_set() {
 
 function startmap_move(lat, lng, PID) {
     clearTimeout(timerc);
+    $("#place" + PID).hide();
+    $("#map_msg").html("Move marker");
+    $("#sites_msg").html("New location:");
     $("#MPID").html(PID);
-    
-    console.log(name);
+    $("#saveSitem").show();
+    $("#saveMovedSite").show();
     var map = new GoogleMap_move(lat, lng, PID);
     map.initialize();
 }
@@ -2144,6 +2152,7 @@ function add_site_map() {
 }
 
 function move_site_map(lat, lng, PID) {
+   
     timerc = setInterval(function() { startmap_move(lat, lng, PID) }, 1000);
 }
 

@@ -23,3 +23,13 @@ C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\GitHub\uks_server\b
 C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\GitHub\uks_server\obj\Debug\ResolveAssemblyReference.cache
 C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\GitHub\uks_server\obj\Debug\HIO.dll
 C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\GitHub\uks_server\obj\Debug\HIO.pdb
+C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\PigeonDev\uks_server\bin\HIO.dll
+C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\PigeonDev\uks_server\bin\HIO.pdb
+C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\PigeonDev\uks_server\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\PigeonDev\uks_server\obj\Debug\HIO.dll
+C:\Documents and Settings\nick.fletcher\My Documents\MyLocal\PigeonDev\uks_server\obj\Debug\HIO.pdb
+G:\Nick\3d\uks_server\bin\HIO.dll
+G:\Nick\3d\uks_server\bin\HIO.pdb
+G:\Nick\3d\uks_server\obj\Debug\ResolveAssemblyReference.cache
+G:\Nick\3d\uks_server\obj\Debug\HIO.dll
+G:\Nick\3d\uks_server\obj\Debug\HIO.pdb
