@@ -138,10 +138,10 @@ function SaveUserPass(username,password) {
 
 }
 
-var getGPSLocation = function() {
+var getGPSLocation = function () {
 
-var suc = function(p) {
-    var GPS_saved = SaveGPSLocation(p.coords.latitude, p.coords.longitude);
+    var suc = function (p) {
+        var GPS_saved = SaveGPSLocation(p.coords.latitude, p.coords.longitude);
         if (GPS_saved == 1) {
             $("#data_status").append("<br /> saved GPS:" + p.coords.latitude, p.coords.longitude);
             GPS_done(1);
@@ -149,9 +149,10 @@ var suc = function(p) {
             GPS_done(0);
         }
     };
-    var locFail = function() {
+    var locFail = function () {
         //alert("GPS fail");
         $("#data_status").append("<br /> GPS fail");
+        $("#map_msg").html("GPS error, set location in My Details");
         GPS_done(0);
     };
     navigator.geolocation.getCurrentPosition(suc, locFail);
@@ -171,6 +172,7 @@ var refreshGPSLocation = function() {
     var locFail = function() {
         //alert("GPS fail");
         $("#data_status").append("<br /> GPS fail");
+        $("#map_msg").html("GPS error, set location in My Details");
         GPS_refresh(0);
     };
     navigator.geolocation.getCurrentPosition(suc, locFail);
@@ -600,10 +602,8 @@ function DataCheck(level,diff) {
         }
     } else {
     if (network == "NONE" || network == null) {
-        $("#weather").removeClass("ui-disabled");
-        $("#weather").addClass("ui-enabled");
-        $("#status").removeClass("ui-disabled");
-        $("#status").addClass("ui-enabled");
+       
+        
         $("#twitter").trigger('collapse');
         $("#statustxt").html("<p>No data connection found. Weather data from " + hours + " hours ago is available.</p>").trigger('create');
         getCacheBW("olddata");
@@ -1420,7 +1420,14 @@ function load_data_db() {
 
         },
         complete: function (xhr, status) {
+
             if (ustatus == '1') {
+                $("#status").removeClass("ui-disabled");
+                $("#status").addClass("ui-enabled");
+                $("#weather").removeClass("ui-disabled");
+                $("#weather").addClass("ui-enabled");
+                $("#search_id").removeClass("ui-disabled");
+                $("#search_id").addClass("ui-enabled");
                 SaveLoginDetailsUP(APIcalls, userID, site_ct, total, lat_nm, lat_tn, username, password);
                 $('#phone_name').html(username);
                 $('#my_sites_ct').html("(" + site_ct + ")");
@@ -1436,7 +1443,7 @@ function load_data_db() {
 
                 } else if (ustatus == '0') {
                   SaveLoginDetails(APIcalls, username, userID, site_ct, total, lat_nm, lat_tn);
-                  $('#name_msg').html("Please add a name in My Details before adding sites.");
+                  $('#name_msg').html("Please add login details in My Details before adding sites.");
                   var town = getTownstore();
                 $('#loc_here').html(town);
                 $("#gps_results").html(town);

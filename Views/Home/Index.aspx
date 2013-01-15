@@ -90,7 +90,7 @@
 </ul>
 
 
-<ul data-role="listview" id="status" data-inset="true">
+<ul data-role="listview" id="status" class="ui-disabled" data-inset="true">
 <li><p class="ui-li-aside"><a href="#" data-role="button" data-inline="true" data-icon="gear" data-theme="b" data-role="button" data-mini="true" onclick="load_data_db()">Refresh</a></p>
 <h3>Status</h3>
 <div id="statustxt"><p>Total sites: <span id="total_sites"></span></p>
@@ -115,6 +115,6 @@
          <p>Get the UK Sledge app from the Google Play Store. </p>
 	 </div>
 
-<h6 id="data_status" onclick="nuke()"></h6>
+<h6 id="data_statusqq" onclick="nukeo()"></h6>
 		
 </asp:Content>
