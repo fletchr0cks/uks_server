@@ -544,23 +544,16 @@ function FTLcheck() {
         ListSites();
 
     }).bind('collapse', function () {
-        if ($('#search_id').hasClass('ui-collapsible-collapsed') && $('add_site').hasClass('ui-collapsible-collapsed')) {
+        if ($('#search_id').hasClass('ui-collapsible-collapsed') && $('#add_site').hasClass('ui-collapsible-collapsed')) {
+            
             $("#place_comments").slideUp();
             $("#addcommentdiv").slideUp();
             load_data_refresh();
-        } else {
-            $("#saveSitem").hide();
-            $("#saveMovedSite").hide();
-            load_data_refresh();
+        } else if ($('#my_sites').hasClass('ui-collapsible')) {
+        
         }
     });
 
-
-
-
-    //        $("#saveSitem").show();
-    //$("#saveMovedSite").show();
-//        
      
  var store = new Lawnchair({
         adapter: "dom",
@@ -1721,8 +1714,6 @@ if (PID == 0) {
 console.log(PID);
 var ultop = "<ul data-role=\"listview\" data-inset=\"true\" class=\"ui-listview\">";
 var ulbtm = "</ul>";
-
-
 var comments_html2 = "";
 var comments_html = "";
 var ct = 0;
@@ -1747,8 +1738,8 @@ $.ajax({
         if (ct == 0) {
             $("#place_comments").html("No comments");
         } else {
-            $("#place_comments").html(comments_html2).trigger('create');
-            //$("#place_comments").html(comments_html + "<div style=\"display:none\" id=\"hidPID\">" + PID + "</div>").trigger('create');
+            //$("#place_comments").html(comments_html2).trigger('create');
+            $("#place_comments").html(comments_html2 + "<div style=\"display:none\" id=\"hidPID\">" + PID + "</div>").trigger('create');
             $("#addcommentdiv").show();
             $("#place_comments").show();
         }
@@ -1766,6 +1757,9 @@ function SaveComment() {
     var comment = document.getElementById("addcommentid").value;
     console.log(PID + "hid");
     var userID = getUserIDstore();
+    var ultop = "<ul data-role=\"listview\" data-inset=\"true\" class=\"ui-listview\">";
+    var ulbtm = "</ul>";
+    var comments_html2 = "";
     var comments_html = "";
     var ct = 0;
     $.ajax({
@@ -1775,12 +1769,9 @@ function SaveComment() {
         data: "PID=" + PID + "&comment=" + comment + "&userID=" + userID,
         dataType: "jsonp",
         success: function(json) {
-            $.each(json.cmts, function(i, result) {
-                comments_html = comments_html + "<div class=\"ui-grid-a\" style=\"font-weight:12px\">" +
- "<div class=\"ui-block-a\"><div class=\"ui-bar ui-bar-c\">" + result.datetime + "</div></div>" +
- "<div class=\"ui-block-b\"><div class=\"ui-bar ui-bar-c\">" + result.username + "</div></div></div>" +
- "<div class=\"ui-bar ui-bar-c\">" + result.comment + "</div>" +
- "<div class=\"ui-bar ui-bar-b\" style=\"height:1px\"></div>";
+            $.each(json.cmts, function (i, result) {
+                var para = "<li class=\"ui-li ui-li-static ui-body-c\"><p class=\"ui-li-heading\" style=\"color:#66A68B\">On " + result.datetime + ", " + result.username + " wrote:</p><p style=\"white-space: normal\" class=\"ui-li-desc\">" + result.comment + "</p></li>";
+                comments_html2 = comments_html2 + ultop + para + ulbtm;
             });
             ct = json.ct;
         },
@@ -1788,14 +1779,16 @@ function SaveComment() {
             // console.debug(xhr); console.debug(error);
 
         },
-        complete: function(xhr, status) {
+        complete: function (xhr, status) {
+            $("#sliderid").val('no').slider("refresh");
             document.getElementById("addcommentid").value = "";
             if (ct == 0) {
                 $("#place_comments").html("No comments");
             } else {
-                $("#place_comments").html(comments_html);
-                $("#comments_ct").html("Comments (" + ct + ")" + "<div style=\"display:none\" id=\"hidPID\">" + PID + "</div>");
-                $("#addcomm").show();
+                $("#place_comments").html(comments_html2 + "<div style=\"display:none\" id=\"hidPID\">" + PID + "</div>").trigger('create');
+                $("#addcommentdiv").show();
+                $("#place_comments").show();
+
             }
             $("#map_msg").html("Comment saved.");
 

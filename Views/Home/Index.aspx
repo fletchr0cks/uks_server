@@ -77,7 +77,7 @@
 
 <div data-role="collapsible" data-theme="a" data-inset="true" data-content-theme="a">
 		<h4>Hourly Weather<div style="display:inline" id="snowfall"></div></h4>
-	<canvas id="canvhere" width="450" height="2000">text here eq no canvas</canvas>
+	<canvas id="canvhere" width="450" height="2850">text here eq no canvas</canvas>
 	 </div>
 
 <ul data-role="listview" data-inset="true">
