@@ -115,6 +115,6 @@
          <p>Get the UK Sledge app from the Google Play Store. </p>
 	 </div>
 
-<h6 id="data_statusqq" onclick="nukeo()"></h6>
+<h6 id="data_status" onclick="nuke()"></h6>
 		
 </asp:Content>
