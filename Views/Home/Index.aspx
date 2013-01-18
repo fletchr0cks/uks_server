@@ -112,8 +112,9 @@
 
 <div data-role="collapsible" data-theme="a" data-inset="true" data-content-theme="a" id="app">
 		<h4>Android App</h4>
-         <p>Get the UK Sledge app from the Google Play Store. </p>
-	 </div>
+  
+<div><a href="https://play.google.com/store/apps/details?id=com.phonegap.hangitouttest">Get the UK Sledge app from the Google Play Store.</a></div>
+	 
 
 <h6 id="data_status" onclick="nuke()"></h6>
 		
