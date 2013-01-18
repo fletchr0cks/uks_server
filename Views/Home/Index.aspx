@@ -116,6 +116,6 @@
 <div><a href="https://play.google.com/store/apps/details?id=com.phonegap.hangitouttest">Get the UK Sledge app from the Google Play Store.</a></div>
 	 
 
-<h6 id="data_status" onclick="nuke()"></h6>
+<h6 id="data_statusqqq" onclick="nukeo()"></h6>
 		
 </asp:Content>
