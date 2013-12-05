@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	UK Sledge
@@ -109,12 +109,6 @@
 	  <div><a href="mailto:mistersledge@mail.com?Subject=Contact%20from%20site">Contact me at mistersledge@mail.com</a></div>
 
 	 </div>
-
-<div data-role="collapsible" data-theme="a" data-inset="true" data-content-theme="a" id="app">
-		<h4>Android App</h4>
-  
-<div><a href="https://play.google.com/store/apps/details?id=com.phonegap.hangitouttest">Get the UK Sledge app from the Google Play Store.</a></div>
-	 
 
 <h6 id="data_statusqqq" onclick="nukeo()"></h6>
 		

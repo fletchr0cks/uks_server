@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	Front
@@ -58,11 +58,11 @@
 	</div>
 	<div class="ui-grid-a">
 	<div class="ui-block-a"><p></p>Password</div>
-	<div class="ui-block-b"><input type="text" name="pass" id="passid" value="" /></div>
+	<div class="ui-block-b"><input type="password" name="pass" id="passid" value="" /></div>
 	</div>
     <div class="ui-grid-a">
 	<div class="ui-block-a"><p></p>Confirm Password</div>
-	<div class="ui-block-b"><input type="text" name="pass2" id="passid2" value="" /></div>
+	<div class="ui-block-b"><input type="password" name="pass2" id="passid2" value="" /></div>
 	</div>
     <div>
     <div class="ui-grid-a">
@@ -88,11 +88,11 @@
 <div id="changePass">
 <div class="ui-grid-a">
 	<div class="ui-block-a"><p></p>New Password:</div>
-	<div class="ui-block-b"><input type="text" name="newpass" id="newpassID1" value="" /></div>
+	<div class="ui-block-b"><input type="password" name="newpass" id="newpassID1" value="" /></div>
 	</div>
 <div class="ui-grid-a">
 	<div class="ui-block-a"><p></p>Confirm Password:</div>
-	<div class="ui-block-b"><input type="text" name="newpass2" id="newpassID2" value="" /></div>
+	<div class="ui-block-b"><input type="password" name="newpass2" id="newpassID2" value="" /></div>
 	</div>
 </div>
 
